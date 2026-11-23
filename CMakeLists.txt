@@ -30,9 +30,7 @@ add_executable(cluster_verify
     src/TcpTransport.cpp
 )
 
-add_executable(mock_socket_test tools/mock_socket_test.cpp)
-
-foreach(target node_server cluster_verify mock_socket_test)
+foreach(target node_server cluster_verify)
     target_include_directories(${target} PRIVATE src)
     target_link_libraries(${target} PRIVATE Threads::Threads)
     target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
