@@ -59,7 +59,8 @@ Start the configured node processes:
 ```
 
 Each node starts its TCP server and loads its corresponding `data/nodeN.csv`.
-Wait until every node log contains a `[LOCAL-LOAD]` message:
+All node logs are saved in `logs/` as `node<ID>.log` (for example,
+`logs/node0.log`). Wait until each log contains a `[LOCAL-LOAD]` message:
 
 ```text
 logs/node0.log
@@ -91,4 +92,20 @@ Stop the cluster gracefully:
 ```bash
 ./cluster_stop.sh
 ```
+## How ownership and routing work
 
+Each record's key is mapped to exactly one node. The ownership calculation is
+implemented in `src/Distributor.cpp`: `int32` keys are converted to unsigned
+32-bit values, while string keys use stable FNV-1a hashing, in both cases the
+result is reduced modulo the configured node count.
+
+`src/DataLoader.cpp` reads and validates each CSV row, asks the distributor for
+the key's owner, and adds the record to a separate buffer for that node. When a
+buffer reaches the configured batch size, it is flushed. Records owned by the
+current node are stored locally. records owned by another node are sent to it
+over TCP by `src/TcpTransport.cpp`. Any remaining partial batches are flushed
+when the input file has been read. The transport waits for an acknowledgement
+and closes the connection after each batch.
+
+Per-node logs show batch and TCP connection activity. The ownership verifier
+checks that records ended up on their calculated owner nodes.
