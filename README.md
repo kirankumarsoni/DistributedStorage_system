@@ -17,9 +17,9 @@ in-memory key-value store using independent node processes and TCP sockets.
 ## Requirements
 
 - Linux
-- C++17 compiler (GCC or Clang)
-- CMake 3.12 or newer
-- Make or Ninja
+- C++17 compiler
+- CMake 3.12 
+- Make
 - Python 3 (only for generating test data)
 
 ## Build
@@ -40,7 +40,7 @@ The default command creates three CSV files, each at least 100 MiB:
 python3 tools/generate_data.py --nodes 3 --mb 100
 ```
 
-The generated files are:
+The generated files :
 
 ```text
 data/node0.csv
@@ -92,37 +92,3 @@ Stop the cluster gracefully:
 ./cluster_stop.sh
 ```
 
-## Mock socket test
-
-Run the small in-memory mock socket contract test:
-
-```bash
-./build/mock_socket_test
-```
-
-## Configuration
-
-Edit `config.conf`:
-
-| Setting | Description |
-|---|---|
-| `nodes` | Number of nodes (1–5) |
-| `key_type` | `string` or `int32` |
-| `value_type` | `string` or `int32` |
-| `delimiter` | One-character CSV delimiter |
-| `batch_size` | Maximum records per transfer batch |
-| `base_port` | First TCP port; node N uses `base_port + N` |
-| `node_host` | IPv4 address used by the loader to connect to nodes |
-| `listen_address` | IPv4 address on which node servers listen |
-
-After changing `nodes`, generate the same number of input files.
-
-## Design notes and limitations
-
-- This is an interview/demo implementation, not a production database.
-- Data is held in memory while a node is running and is not persisted on shutdown.
-- There is no replication, authentication, TLS, or automatic recovery.
-- The verifier fetches node key inventories and therefore uses additional
-  memory during verification.
-- All nodes can run on one Linux machine for the demonstration. For separate
-  machines, configure reachable addresses and network/firewall access.
