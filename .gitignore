@@ -1,0 +1,20 @@
+# CMake build output
+/build/
+/cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+*.o
+*.a
+
+# Generated input, logs, and processed output
+/data/
+/logs/
+/output/
+node*.pid
+*.log
+
+# Temporary and OS-generated files
+*.tmp
+.DS_Store
+Thumbs.db
